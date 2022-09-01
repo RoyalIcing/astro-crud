@@ -1,32 +1,14 @@
 ---
-import { RequestCookieStore } from "@worker-tools/request-cookie-store";
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
+import { readCurrentUser } from "../services/currentUser";
 
-const cookieStore = new RequestCookieStore(Astro.request);
-const username = (await cookieStore.get("insecure-username"))?.value;
+const currentUser = await readCurrentUser(Astro.request);
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Welcome to Astro." currentUser={currentUser}>
   <main>
     <h1>Welcome to <span class="text-gradient">Astro</span></h1>
-    {
-      username && (
-        <>
-          <div>You are signed in as {username}.</div>
-          <form action="/logout" method="post">
-            <button>Log out</button>
-          </form>
-        </>
-      )
-    }
-    {
-      !username && (
-        <div>
-          You are not signed in. <a href="/login">Sign in</a>
-        </div>
-      )
-    }
     <p class="instructions">
       Check out the <code>src/pages</code> directory to get started.<br />
       <strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
@@ -64,7 +46,7 @@ const username = (await cookieStore.get("insecure-username"))?.value;
   main {
     margin: auto;
     padding: 1em;
-    max-width: 60ch;
+    max-width: var(--measure);
   }
 
   .text-gradient {

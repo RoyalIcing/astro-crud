@@ -1,20 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Card from "../components/Card.astro";
-import { readUpstash, postUpstash } from "../services/upstash";
+import { readCurrentUser } from "../services/currentUser";
 
-let counter = await readUpstash("/get/counter");
-// const formData = new URLSearchParams(Astro.request.method === "POST" ? await Astro.request.text() : "");
-
-if (Astro.request.method === "POST") {
-  const start = Date.now();
-  counter = (await postUpstash(["INCR", "counter"])).result;
-  console.log(`latency to increment counter: ${Date.now() - start}ms`);
-  return Astro.redirect("/counter");
-}
+const currentUser = await readCurrentUser(Astro.request);
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Welcome to Astro." currentUser={currentUser}>
   <main>
     <h1>Sign in to <span class="text-gradient">ACME</span></h1>
     <form action="/session" accept-charset="UTF-8" method="post">

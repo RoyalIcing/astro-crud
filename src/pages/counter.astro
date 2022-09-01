@@ -1,87 +1,40 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { readUpstash, postUpstash } from '../services/upstash';
+import Layout from "../layouts/Layout.astro";
+import { readCurrentUser } from "../services/currentUser";
+import { readUpstash, postUpstash } from "../services/upstash";
 
-let counter = await readUpstash('/get/counter');
+const currentUser = await readCurrentUser(Astro.request);
+let counter = await readUpstash("/get/counter");
 
 if (Astro.request.method === "POST") {
-    const start = Date.now();
-    counter = (await postUpstash(['INCR', 'counter'])).result;
-    console.log(`latency to increment counter: ${Date.now() - start}ms`);
-    return Astro.redirect('/counter');
+  const start = Date.now();
+  counter = (await postUpstash(["INCR", "counter"])).result;
+  console.log(`latency to increment counter: ${Date.now() - start}ms`);
+  return Astro.redirect("/counter");
 }
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-        <form method="post">
-            <output>Counter: {counter}</output>
-            <button name="action" value="increment">Increment</button>
-        </form>
-	</main>
+<Layout title="Welcome to Astro." currentUser={currentUser}>
+  <main>
+    <form method="post">
+      <output>Counter: {counter}</output>
+      <button name="action" value="increment">Increment</button>
+    </form>
+  </main>
 </Layout>
 
 <style>
-	:root {
-		--astro-gradient: linear-gradient(0deg, #4f39fa, #da62c4);
-	}
+  :root {
+    --astro-gradient: linear-gradient(0deg, #4f39fa, #da62c4);
+  }
 
-	h1 {
-		margin: 2rem 0;
-	}
+  main {
+    margin: auto;
+    padding: 1em;
+    max-width: 60ch;
+  }
 
-	main {
-		margin: auto;
-		padding: 1em;
-		max-width: 60ch;
-	}
-
-    form {
-        font-size: var(--font-size-lg);
-    }
-
-	.text-gradient {
-		font-weight: 900;
-		background-image: var(--astro-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 100% 200%;
-		background-position-y: 100%;
-		border-radius: 0.4rem;
-		animation: pulse 4s ease-in-out infinite;
-	}
-
-	@keyframes pulse {
-		0%,
-		100% {
-			background-position-y: 0%;
-		}
-		50% {
-			background-position-y: 80%;
-		}
-	}
-
-	.instructions {
-		line-height: 1.6;
-		margin: 1rem 0;
-		background: #4f39fa;
-		padding: 1rem;
-		border-radius: 0.4rem;
-		color: var(--color-bg);
-	}
-
-	.instructions code {
-		font-size: 0.875em;
-		border: 0.1em solid var(--color-border);
-		border-radius: 4px;
-		padding: 0.15em 0.25em;
-	}
-
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 1rem;
-		padding: 0;
-	}
+  form {
+    font-size: var(--font-size-lg);
+  }
 </style>
