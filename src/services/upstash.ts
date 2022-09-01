@@ -1,5 +1,5 @@
-const UPSTASH_URL = import.meta.env.UPSTASH_REDIS_REST_URL;
-const UPSTASH_TOKEN = import.meta.env.UPSTASH_REDIS_REST_TOKEN;
+const UPSTASH_URL = import.meta.env.UPSTASH_REDIS_REST_URL || Deno.env.get("UPSTASH_REDIS_REST_URL");
+const UPSTASH_TOKEN = import.meta.env.UPSTASH_REDIS_REST_TOKEN || Deno.env.get("UPSTASH_REDIS_REST_TOKEN");
 
 export async function readUpstash(path: string) {
   console.log('UPSTASH_URL', UPSTASH_URL);
