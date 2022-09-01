@@ -2,7 +2,9 @@ const UPSTASH_URL = import.meta.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = import.meta.env.UPSTASH_REDIS_REST_TOKEN;
 
 export async function readUpstash(path: string) {
-  return await fetch(new URL(path, UPSTASH_URL).href, {
+  console.log('UPSTASH_URL', UPSTASH_URL);
+  const url = new URL(path, UPSTASH_URL);
+  return await fetch(url.href, {
     headers: {
       Authorization: `Bearer ${UPSTASH_TOKEN}`,
     },
