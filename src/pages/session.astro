@@ -1,0 +1,22 @@
+---
+import { RequestCookieStore } from "@worker-tools/request-cookie-store";
+
+if (Astro.request.method === "POST") {
+  const formData = new URLSearchParams(await Astro.request.text());
+  console.log("Signing in…", Object.fromEntries(formData));
+  const login = formData.get("login");
+  const cookieStore = new RequestCookieStore(Astro.request);
+  await cookieStore.set({
+    name: "insecure-username",
+    value: login ?? "",
+    httpOnly: true,
+  });
+  const response = Astro.redirect("/");
+  new Headers(cookieStore.headers).forEach((value, key) => {
+    response.headers.append(key, value);
+  })
+  return response;
+} else {
+  return Astro.redirect("/login");
+}
+---
